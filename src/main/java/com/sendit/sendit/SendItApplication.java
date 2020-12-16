@@ -8,6 +8,7 @@ package com.sendit.sendit;
 @EnableJpaAuditing
 public class SendItApplication {
 
+    // TODO: KDY - 테스트입니다.
     public static void main(String[] args) {
         SpringApplication.run(SendItApplication.class, args);
     }
