@@ -1,5 +1,6 @@
 package com.sendit.sendit.service;
 
+import com.sendit.sendit.dto.FileDTO;
 import com.sendit.sendit.model.File;
 import com.sendit.sendit.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,5 +19,11 @@ public class FileService {
 
     public List<File> getAllFile(){
         return filerepository.findAll();
+    }
+
+    public File create(FileDTO filedto){
+        File file = filedto.toEntity();
+
+        return filerepository.save(file);
     }
 }
