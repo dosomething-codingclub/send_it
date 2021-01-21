@@ -21,9 +21,8 @@ public class FileService {
         return filerepository.findAll();
     }
 
-    public File create(FileDTO filedto){
+    public void create(FileDTO filedto){
         File file = filedto.toEntity();
-
-        return filerepository.save(file);
+        filerepository.save(file);
     }
 }
