@@ -5,23 +5,30 @@
     <title>Title</title>
 </head>
 <body>
-<button onclick="ajaxTest()">test</button>
 
+<button onclick="ajaxTest1()">test1</button>
+<br>
+
+<form enctype="multipart/form-data" id="upload_form">
+    <input multiple="multiple" name="file" type="file"/>
 </form>
+<button onclick="ajaxTest2()">Upload</button>
+
 </body>
 <script>
+
+
     // XMLHttpRequest 객체의 인스턴스를 생성합니다.
     var xhr = new XMLHttpRequest();
 
-    function ajaxTest() {
-        var json = {
-            sendIp: "아이디",
-            fileName: "1234",
-            token: "1234",
-        };
+
+    function ajaxTest2() {
+
+        var form = document.querySelector("#upload_form");
+        var formData = new FormData(form);
 
         // open() 메서드는 요청을 준비하는 메서드입니다. (http 메서드, 데이터를 받아올 URL 경로, 비동기 여부)
-        xhr.open("POST", "http://localhost:8080/test/test", true);
+        xhr.open("POST", "http://localhost:8080/test/upload", true);
         xhr.onreadystatechange = function () { //폴백
             if (xhr.readyState == 4) {
                 if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
@@ -31,12 +38,35 @@
                 }
             }
         }
-        //post방식은 xhr객체에 데이터를 붙여서 전송
-        xhr.setRequestHeader("Content-Type", "application/json");
         // send() 메서드는 준비된 요청을 서버로 전송하는 메서드입니다. (서버에 전달될 정보)
-        xhr.send(JSON.stringify(json));
+        xhr.send(formData);
     }
 
+
+    // function ajaxTest1() {
+    //     var json = {
+    //         sendIp: "아이디",
+    //         fileName: "1234",
+    //         token: "1234",
+    //     };
+    //
+    //     // open() 메서드는 요청을 준비하는 메서드입니다. (http 메서드, 데이터를 받아올 URL 경로, 비동기 여부)
+    //     xhr.open("POST", "http://localhost:8080/test/test", true);
+    //     xhr.onreadystatechange = function () { //폴백
+    //         if (xhr.readyState == 4) {
+    //             if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
+    //                 process();
+    //             } else {
+    //                 alert("요청오류 : " + xhr.status);
+    //             }
+    //         }
+    //     }
+    //     //post방식은 xhr객체에 데이터를 붙여서 전송
+    //     xhr.setRequestHeader("Content-Type", "application/json");
+    //     // send() 메서드는 준비된 요청을 서버로 전송하는 메서드입니다. (서버에 전달될 정보)
+    //     xhr.send(JSON.stringify(json));
+    // }
+    //
     function process() {
 
         var data = xhr.responseText;
@@ -44,7 +74,6 @@
         alert("요청 결과 : " + data);
 
     }
-
 
 </script>
 </html>
