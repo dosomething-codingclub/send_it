@@ -6,9 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -26,6 +29,13 @@ public class SenditController {
 
     @PostMapping(value = "/upload",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> upload(MultipartHttpServletRequest mtfRequest) {
+
+        HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();//HttpServletReqeust 가져오기
+        String ip = req.getHeader("X-FORWARDED-FOR");//was일 경우 ip확인
+        if (ip == null)//was가 아니라면
+            ip = req.getRemoteAddr();
+
+        FileDTO filedto = new FileDTO();
 
         //폴더 생성 여부 확인
         String path = "D:\\filedown";
@@ -51,6 +61,14 @@ public class SenditController {
             System.out.println("파일 이름 : " + mf.getOriginalFilename());
             System.out.println("파일 크기 : " + mf.getSize());
 
+            System.out.println(ip);
+            //아이피 설정
+            filedto.setSendIp(ip);
+            //토큰 설정
+            filedto.setToken("123456");
+            //파일명 설정
+            filedto.setFileName(mf.getOriginalFilename());
+
             try (
                     FileOutputStream fos = new FileOutputStream("D:/filedown/" + mf.getOriginalFilename());
                     InputStream is = mf.getInputStream();
@@ -63,6 +81,7 @@ public class SenditController {
             } catch (Exception ex) {
                 throw new RuntimeException("서버 오류");
             }
+            fileservice.create(filedto);
         }
         return ResponseEntity.ok(null);
     }
