@@ -13,7 +13,7 @@ import java.util.Date;
 @Table(name = "File")
 @NoArgsConstructor
 public class File extends AbstractEntity {
-    @Column(length = 40, nullable = false)
+    @Column(length = 80, nullable = false)
     private String fileName;
 
     @Column(length = 15, nullable = false)

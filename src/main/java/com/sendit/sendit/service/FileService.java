@@ -5,12 +5,13 @@ import com.sendit.sendit.model.File;
 import com.sendit.sendit.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 
@@ -55,25 +56,7 @@ public class FileService {
         return token;
     }
 
-    public void mkdir() {
-        //폴더 생성 여부 확인
-        String path = "D:\\filedown";
-        java.io.File Folder = new java.io.File(path);
-
-        if (!Folder.exists()) {
-            try {
-                Folder.mkdir();
-                System.out.println("폴더를 생성했습니다.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void filesave(FileService fileservice, List<MultipartFile> fileList, String ip) {
-        //저장을 위한 폴더 생성
-        fileservice.mkdir();
-
+    public void filesave(FileService fileservice, List<MultipartFile> fileList, String ip) throws IOException {
         FileDTO filedto = new FileDTO();
 
         for (MultipartFile mf : fileList) {
@@ -81,27 +64,28 @@ public class FileService {
             System.out.println("파일 크기 : " + mf.getSize());
 
             System.out.println(ip);
+
+            String fileName = mf.getOriginalFilename();
+
             //아이피 설정
             filedto.setSendIp(ip);
             //토큰 설정
             filedto.setToken(fileservice.maketoken());
             //파일명 설정
-            filedto.setFileName(mf.getOriginalFilename());
+            filedto.setFileName(fileName);
 
-            try (
-                    FileOutputStream fos = new FileOutputStream("D:/filedown/" + mf.getOriginalFilename());
-                    InputStream is = mf.getInputStream();
-                    BufferedOutputStream b_fos = new BufferedOutputStream(fos, 1024);
-                    BufferedInputStream b_is = new BufferedInputStream(is, 1024)
-            ) {
-                int readCount = 0;
-                byte[] buffer = new byte[1024];
-                while ((readCount = b_is.read(buffer)) != -1) {
-                    b_fos.write(buffer, 0, readCount);
-                }
-            } catch (Exception ex) {
-                throw new RuntimeException("서버 오류");
-            }
+            //목표 주소 생성
+            Path directory = Paths.get("D:\\filedown").toAbsolutePath().normalize();
+            //해당 경로까지 디렉토리 생성
+            Files.createDirectories(directory);
+            //파일명에 ..문자가 있을 경우 오류 발생
+            Assert.state(!mf.getOriginalFilename().contains(".."),"파일 이름에서 ..을 제거하세요");
+            Path targetPath = directory.resolve(fileName).normalize();
+            //파일이 이미 존재한다면 오류 발생
+            Assert.state(!Files.exists(targetPath),fileName+" 파일이 이미 생성되어있습니다.");
+
+            mf.transferTo(targetPath);
+
             fileservice.create(filedto);
         }
     }
