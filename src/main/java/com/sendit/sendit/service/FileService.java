@@ -19,14 +19,12 @@ import java.util.Random;
 public class FileService {
 
     private final FileRepository filerepository;
+    private final FileSentLogService fileSentLogService;
 
     @Autowired
-    public FileService(FileRepository filerepository) {
+    public FileService(FileRepository filerepository, FileSentLogService fileSentLogService) {
         this.filerepository = filerepository;
-    }
-
-    public List<File> getAllFile() {
-        return filerepository.findAll();
+        this.fileSentLogService = fileSentLogService;
     }
 
     public void create(FileDTO filedto) {
@@ -63,8 +61,6 @@ public class FileService {
             System.out.println("파일 이름 : " + mf.getOriginalFilename());
             System.out.println("파일 크기 : " + mf.getSize());
 
-            System.out.println(ip);
-
             String fileName = mf.getOriginalFilename();
 
             //아이피 설정
@@ -88,5 +84,9 @@ public class FileService {
 
             fileservice.create(filedto);
         }
+    }
+
+    public void FileDelete(){
+
     }
 }

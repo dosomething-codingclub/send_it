@@ -44,6 +44,10 @@ public class File extends AbstractEntity {
         return deleted;
     }
 
+    public void setDeleted(boolean deleted){
+        this.deleted = deleted;
+    }
+
     @Builder
     public File(String fileName, String sendIp, String token){
         this.fileName = fileName;
