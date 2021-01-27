@@ -1,14 +1,19 @@
 package com.sendit.sendit.model;
 
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import java.util.Date;
 
 @Entity
 @Table(name = "File")
+@NoArgsConstructor
 public class File extends AbstractEntity {
-    @Column(length = 40, nullable = false)
+    @Column(length = 80, nullable = false)
     private String fileName;
 
     @Column(length = 15, nullable = false)
@@ -37,5 +42,17 @@ public class File extends AbstractEntity {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public void setDeleted(boolean deleted){
+        this.deleted = deleted;
+    }
+
+    @Builder
+    public File(String fileName, String sendIp, String token){
+        this.fileName = fileName;
+        this.sendIp = sendIp;
+        this.token = token;
+        this.deleted = false;
     }
 }
