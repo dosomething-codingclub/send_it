@@ -29,14 +29,12 @@ public class SenditController {
     private final FileService fileservice;
     private final FileSentLogService fileSentLogService;
     private final FileRepository filerepository;
-    private final FileSendLogRepository fileSendLogRepository;
 
     @Autowired
-    public SenditController(FileService fileservice, FileSentLogService fileSentLogService, FileRepository filerepository, FileSendLogRepository fileSendLogRepository) {
+    public SenditController(FileService fileservice, FileSentLogService fileSentLogService, FileRepository filerepository) {
         this.fileservice = fileservice;
         this.fileSentLogService = fileSentLogService;
         this.filerepository = filerepository;
-        this.fileSendLogRepository = fileSendLogRepository;
     }
 
     //업로드
