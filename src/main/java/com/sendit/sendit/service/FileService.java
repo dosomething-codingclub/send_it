@@ -19,12 +19,10 @@ import java.util.Random;
 public class FileService {
 
     private final FileRepository filerepository;
-    private final FileSentLogService fileSentLogService;
 
     @Autowired
-    public FileService(FileRepository filerepository, FileSentLogService fileSentLogService) {
+    public FileService(FileRepository filerepository) {
         this.filerepository = filerepository;
-        this.fileSentLogService = fileSentLogService;
     }
 
     public void create(FileDTO filedto) {
@@ -78,7 +76,10 @@ public class FileService {
             Assert.state(!mf.getOriginalFilename().contains(".."),"파일 이름에서 ..을 제거하세요");
             Path targetPath = directory.resolve(fileName).normalize();
             //파일이 이미 존재한다면 오류 발생
-            Assert.state(!Files.exists(targetPath),fileName+" 파일이 이미 생성되어있습니다.");
+            if(Files.exists(targetPath)){
+                System.out.println(fileName+" 파일이 이미 생성되어있습니다.");
+                return;
+            }
 
             mf.transferTo(targetPath);
 
@@ -86,7 +87,4 @@ public class FileService {
         }
     }
 
-    public void FileDelete(){
-
-    }
 }

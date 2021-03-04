@@ -3,12 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <style>
+        .dropzone {
+            width: 700px;
+            height: 400px;
+            margin: 0 auto;
+            background-color: #9637CE;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .hover {
+            display: block;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 9999999;
+            background-color: hsla(0, 0%, 100%, .93);
+            color: #000000;
+        }
+
+        /*.dropzone-inner {*/
+        /*    border-radius: 8px;*/
+        /*    border: 2px dashed #000000;*/
+        /*    width: 100%;*/
+        /*    height: 100%;*/
+        /*    position: relative;*/
+        /*}*/
+
+        #upload_form {
+            display: none;
+        }
+
+    </style>
+    <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
 
 <form enctype="multipart/form-data" id="upload_form">
-    <input multiple="multiple" name="file" type="file"/>
+    <input multiple name="file" type="file"/>
 </form>
+
 <button onclick="ajaxTest()">Upload</button>
 
 <form id="download_form">
@@ -16,18 +53,61 @@
 </form>
 <button onclick="download()">Download</button>
 
+<div class="dropzone">
+    <div class="dropzone-inner"></div>
+</div>
 </body>
 <script>
 
+    const fileUpload = document.querySelector("#upload_form");
+    const drop = document.querySelector(".dropzone");
+
+    drop.ondragenter = function () {
+        drop.style.border = "2px dashed #000000";
+    };
+
+    drop.ondragover = function(e){
+        e.preventDefault();
+    }
+
+    drop.ondrop = function(e){
+      e.preventDefault();
+      let files = e.dataTransfer.files;
+      if(files.length < 1)
+          return;
+      let data = new FormData();
+      for(let i = 0; i < files.length; i++){
+          data.append('file',files[i]);
+      }
+
+        // open() 메서드는 요청을 준비하는 메서드입니다. (http 메서드, 데이터를 받아올 URL 경로, 비동기 여부)
+        xhr.open("POST", "http://127.0.0.1:8080/test/upload", true);
+        xhr.onreadystatechange = function () { //폴백
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) { //200은 잘넘어왔단 것이다.
+                    process();
+                } else {
+                    alert("요청오류 : " + xhr.status);
+                }
+            }
+        }
+        // send() 메서드는 준비된 요청을 서버로 전송하는 메서드입니다. (서버에 전달될 정보)
+        xhr.send(data);
+    };
+
+    drop.ondragleave = function () {
+        drop.style.border = "";
+    };
 
     // XMLHttpRequest 객체의 인스턴스를 생성합니다.
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
+    let form;
 
-
+    //https://bemeal2.tistory.com/83
     function ajaxTest() {
 
-        var form = document.querySelector("#upload_form");
-        var formData = new FormData(form);
+        form = document.querySelector("#upload_form");
+        const formData = new FormData(form);
 
         // open() 메서드는 요청을 준비하는 메서드입니다. (http 메서드, 데이터를 받아올 URL 경로, 비동기 여부)
         xhr.open("POST", "http://127.0.0.1:8080/test/upload", true);
@@ -45,7 +125,7 @@
     }
 
     function download() {
-        var form = document.querySelector("#download_form");
+        form = document.querySelector("#download_form");
         form.method = "get";
         form.action = "http://127.0.0.1:8080/test/download"
         form.submit();
@@ -53,9 +133,10 @@
 
 
     function process() {
-        var data = xhr.responseText;
+        const data = xhr.responseText;
         alert("요청 결과 : " + data);
     }
+
 
 </script>
 </html>

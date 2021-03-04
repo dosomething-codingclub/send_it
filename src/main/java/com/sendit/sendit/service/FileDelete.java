@@ -2,7 +2,7 @@ package com.sendit.sendit.service;
 
 import com.sendit.sendit.model.File;
 import com.sendit.sendit.repository.FileRepository;
-import com.sendit.sendit.repository.FileSendLogRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +13,10 @@ import java.util.List;
 @Component
 public class FileDelete {
     private final FileRepository fileRepository;
-    private final FileSendLogRepository fileSendLogRepository;
 
-    public FileDelete(FileRepository fileRepository, FileSendLogRepository fileSendLogRepository){
+    @Autowired
+    public FileDelete(FileRepository fileRepository){
         this.fileRepository = fileRepository;
-        this.fileSendLogRepository = fileSendLogRepository;
     }
 
     public void delete(File dFile){
